@@ -1,0 +1,59 @@
+{
+  "name": "@obsidon/wallet-sdk",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/exports/index.js",
+  "module": "dist/exports/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/exports/index.js",
+      "types": "./dist/exports/index.d.ts"
+    },
+    "./*": {
+      "import": "./dist/exports/*.js",
+      "types": "./dist/exports/*.d.ts"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@types/react": "^18.3.11",
+    "prettier": "^3.2.5",
+    "react": "^18.3.1",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "@aztec/aztec.js": "0.59.0",
+    "@aztec/circuit-types": "0.59.0",
+    "@aztec/circuits.js": "0.59.0",
+    "@aztec/foundation": "0.59.0",
+    "@walletconnect/modal-sign-html": "^2.6.2",
+    "@walletconnect/utils": "^2.11.2",
+    "svelte": "^5.0.0-next.144",
+    "svelte-persisted-store": "^0.11.0",
+    "ts-essentials": "^9.4.1",
+    "tslib": "^2.8.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "dev": "pnpm _chore && tsc -w",
+    "build": "pnpm _chore && rm -rf dist && tsc",
+    "test": "pnpm test:lint",
+    "test:lint": "tsc --noEmit --emitDeclarationOnly false && prettier --check .",
+    "test:lint:fix": "prettier --write .",
+    "_chore": "pnpm i"
+  },
+  "types": "dist/exports/index.d.ts"
+}
