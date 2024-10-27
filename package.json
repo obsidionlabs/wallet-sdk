@@ -32,8 +32,6 @@
     "@aztec/circuit-types": "0.59.0",
     "@aztec/circuits.js": "0.59.0",
     "@aztec/foundation": "0.59.0",
-    "@walletconnect/modal-sign-html": "^2.6.2",
-    "@walletconnect/utils": "^2.11.2",
     "svelte": "^5.0.0-next.144",
     "svelte-persisted-store": "^0.11.0",
     "ts-essentials": "^9.4.1",
@@ -49,7 +47,7 @@
   },
   "scripts": {
     "dev": "pnpm _chore && tsc -w",
-    "build": "pnpm _chore && rm -rf dist && tsc",
+    "build": "rm tsconfig.tsbuildinfo && pnpm _chore && rm -rf dist && tsc",
     "test": "pnpm test:lint",
     "test:lint": "tsc --noEmit --emitDeclarationOnly false && prettier --check .",
     "test:lint:fix": "prettier --write .",

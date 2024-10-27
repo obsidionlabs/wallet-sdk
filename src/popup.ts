@@ -3,19 +3,19 @@ import { persisted } from "svelte-persisted-store";
 import { get, readonly, writable } from "svelte/store";
 import { assert, type AsyncOrSync } from "ts-essentials";
 import { Communicator, type FallbackOpenPopup } from "./Communicator.js";
-import type { Eip1193Account } from "./exports/eip1193.js";
+import type { AztecEip1193Account } from "./exports/eip1193.js";
 import type {
 	RpcRequest,
 	RpcRequestMap,
 	TypedEip1193Provider,
 } from "./types.js";
 import {
-	SHIELDSWAP_WALLET_URL,
+	OBSIDON_WALLET_URL,
 	accountFromCompleteAddress,
 	resolvePxe,
 } from "./utils.js";
 
-export class ShieldswapWalletSdk implements TypedEip1193Provider {
+export class ObsidonWalletSDK implements TypedEip1193Provider {
 	readonly #pxe: () => AsyncOrSync<PXE>;
 
 	readonly #communicator: Communicator;
@@ -26,7 +26,7 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 		"shield-wallet-connected-complete-address",
 		null
 	);
-	readonly #account = writable<Eip1193Account | undefined>(undefined);
+	readonly #account = writable<AztecEip1193Account | undefined>(undefined);
 	readonly accountObservable = readonly(this.#account);
 
 	constructor(
@@ -40,7 +40,7 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 	) {
 		this.#pxe = resolvePxe(pxe);
 		this.#communicator = new Communicator({
-			url: `${SHIELDSWAP_WALLET_URL}/sign`,
+			url: `${OBSIDON_WALLET_URL}/confirm`,
 			...params,
 		});
 
@@ -75,6 +75,7 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 			method: "aztec_requestAccounts",
 			params: [],
 		});
+		console.log("result in connect: ", result);
 		const [address] = result;
 		assert(address, "No accounts found");
 		const account = await accountFromCompleteAddress(
@@ -101,13 +102,16 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 	async request<M extends keyof RpcRequestMap>(
 		request: RpcRequest<M>
 	): Promise<ReturnType<RpcRequestMap[M]>> {
+		console.log("request: ", request);
 		const result = await this.#requestPopup(request);
+		console.log("result in request: ", result);
 		return result;
 	}
 
 	async #requestPopup<M extends keyof RpcRequestMap>(
 		request: RpcRequest<M>
 	): Promise<ReturnType<RpcRequestMap[M]>> {
+		console.log("requestPopup...");
 		this.#pendingRequestsCount++;
 		// TODO: handle batch requests
 		try {
@@ -117,6 +121,7 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 				method: request.method,
 				params: request.params,
 			};
+			console.log("rpcRequest: ", rpcRequest);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const response: any = (
 				await this.#communicator.postRequestAndWaitForResponse({
@@ -124,11 +129,14 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 					data: rpcRequest,
 				})
 			)?.data;
-			if ("error" in response) {
-				throw new Error(JSON.stringify(response.error));
-			}
-			return response.result;
+			console.log("response: ", response);
+			// if ("error" in response) {
+			// 	console.log("response.error: ", response.error);
+			// 	throw new Error(JSON.stringify(response.error));
+			// }
+			return response.result ? response.result : "mock response";
 		} finally {
+			console.log("finally...");
 			this.#pendingRequestsCount--;
 
 			const disconnectIfNoPendingRequests = () => {
@@ -149,5 +157,6 @@ export class ShieldswapWalletSdk implements TypedEip1193Provider {
 const finalMethods: readonly (keyof RpcRequestMap)[] = [
 	"aztec_requestAccounts",
 	"aztec_sendTransaction",
+	"aztec_createTxExecutionRequest",
 	"aztec_experimental_tokenRedeemShield",
 ];

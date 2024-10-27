@@ -1,5 +1,4 @@
 import type { AbiType } from "@aztec/foundation/abi";
-import type { WalletConnectModalSignOptions } from "@walletconnect/modal-sign-html";
 export interface SerdeItem<T, S> {
     serialize(value: T): Promise<S>;
     deserialize(value: S): Promise<T>;
@@ -42,6 +41,16 @@ export type RpcRequestMap = {
         messageHash: string;
     }) => void;
     /**
+     * Sends a transaction to the blockchain from `request.from` account.
+     * @returns the transaction hash
+     */
+    aztec_createTxExecutionRequest: (request: {
+        /** `AztecAddress` of the account that will send the transaction */
+        from: string;
+        /** List of `FunctionCall`s to be executed in the transaction */
+        calls: SerializedFunctionCall[];
+    }) => string;
+    /**
      * Refer here for more information <https://forum.aztec.network/t/management-of-secrets-for-token-redeem-shield/4923>
      *
      * @returns `Fr` hash of the secret.
@@ -79,9 +88,6 @@ export type RpcEventsMap = {
      * Emitted when the user changes the selected account in wallet UI. It is the `CompleteAddress` of the new selected account.
      */
     accountsChanged: [string];
-};
-export type MyWalletConnectOptions = Omit<WalletConnectModalSignOptions, "metadata"> & {
-    metadata?: WalletConnectModalSignOptions["metadata"];
 };
 export interface Eip1193Provider {
     request(request: {

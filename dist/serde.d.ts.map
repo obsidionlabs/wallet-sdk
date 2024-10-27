@@ -1,1 +1,1 @@
-{"version":3,"file":"serde.d.ts","sourceRoot":"","sources":["../src/serde.js"],"names":[],"mappings":"AAAA,sEAAsE;AAEtE;;;GAGG;AAEH;;;;GAIG;AACH,oBAJU,KAAK,CAgCb;;kBApCQ,UAAU,OAAO,iBAAiB,EAAE,YAAY,EAAE,sBAAsB,CAAC;;4CAJ5B,YAAY;+BAAZ,YAAY"}
+{"version":3,"file":"serde.d.ts","sourceRoot":"","sources":["../src/serde.ts"],"names":[],"mappings":"AAAA,sEAAsE;AAEtE,OAAO,EAAE,YAAY,EAAE,MAAM,sBAAsB,CAAC;AACpD,OAAO,EAAE,YAAY,EAAE,MAAM,uBAAuB,CAAC;AAcrD,eAAO,MAAM,KAAK;;wBAEM,YAAY;;;;;;;;;0BASV,GAAG;;CAe5B,CAAC"}
