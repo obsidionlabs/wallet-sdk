@@ -1,20 +1,8 @@
-/** @import { SerializedFunctionCall, SerdeItem } from "./types.js" */
-
 import { FunctionCall } from "@aztec/circuit-types";
 import { FunctionType } from "@aztec/foundation/abi";
 
 FunctionType;
 
-// /**
-//  * @typedef Serde
-//  * @prop {SerdeItem<import("@aztec/aztec.js").FunctionCall, SerializedFunctionCall>} FunctionCall
-//  */
-
-// /**
-//  * @type {Serde}
-//  *
-//  * @deprecated TODO: think of a better way to do this (serialize as a string using ClassConverter)
-//  */
 export const serde = {
 	FunctionCall: {
 		serialize: async (fc: FunctionCall) => ({
