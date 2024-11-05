@@ -90,6 +90,10 @@ export class Eip1193Account extends AccountWallet {
 				serde.FunctionCall.serialize(e)
 			)
 		);
+		console.log(
+			"pending authwits: ",
+			this.#pendingAuthWits.map((x) => x.toString())
+		);
 		const result = await this.#eip1193Provider.request({
 			method: "aztec_sendTransaction",
 			params: [

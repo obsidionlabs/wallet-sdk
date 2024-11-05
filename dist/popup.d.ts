@@ -15,7 +15,6 @@ export declare class ObsidionWalletSDK implements TypedEip1193Provider {
         walletUrl?: string;
     });
     getAccount(): Eip1193Account | undefined;
-    getSelectedAccount(): Promise<Eip1193Account>;
     connect(): Promise<Eip1193Account>;
     disconnect(): Promise<void>;
     /**
