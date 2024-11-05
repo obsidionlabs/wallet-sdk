@@ -1,17 +1,17 @@
 {
-  "name": "@obsidon/wallet-sdk",
+  "name": "@obsidion/wallet-sdk",
   "version": "0.0.1",
   "type": "module",
-  "main": "dist/exports/index.js",
-  "module": "dist/exports/index.js",
+  "main": "src/exports/index.js",
+  "module": "src/exports/index.js",
   "exports": {
     ".": {
-      "import": "./dist/exports/index.js",
-      "types": "./dist/exports/index.d.ts"
+      "import": "./src/exports/index.js",
+      "types": "./src/exports/index.d.ts"
     },
     "./*": {
-      "import": "./dist/exports/*.js",
-      "types": "./dist/exports/*.d.ts"
+      "import": "./src/exports/*.js",
+      "types": "./src/exports/*.d.ts"
     }
   },
   "publishConfig": {
