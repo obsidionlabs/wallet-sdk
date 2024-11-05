@@ -1,4 +1,3 @@
-/** @import { SerializedFunctionCall, SerdeItem } from "./types.js" */
 import { FunctionCall } from "@aztec/circuit-types";
 import { FunctionType } from "@aztec/foundation/abi";
 export declare const serde: {

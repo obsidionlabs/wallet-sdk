@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ObsidonWalletSDK } from "../popup.js";
-import type { AztecEip1193Account } from "./eip1193.js";
+import type { ObsidionWalletSDK } from "../popup.js";
+import type { Eip1193Account } from "./eip1193.js";
 
-export function useAccount(wallet: ObsidonWalletSDK) {
-	const [account, setAccount] = useState<AztecEip1193Account | undefined>(
-		undefined
-	);
+export function useAccount(wallet: ObsidionWalletSDK) {
+	const [account, setAccount] = useState<Eip1193Account | undefined>(undefined);
 
 	useEffect(() => {
 		const unsubscribe = wallet.accountObservable.subscribe((account) => {

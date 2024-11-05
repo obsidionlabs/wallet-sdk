@@ -2,7 +2,11 @@ import { CompleteAddress, PXE } from "@aztec/circuit-types";
 import { TypedEip1193Provider } from "./types.js";
 import { AsyncOrSync } from "ts-essentials";
 
-export const OBSIDON_WALLET_URL = "http://localhost:5173";
+export const SHIELDSWAP_WALLET_URL: string =
+	typeof window !== "undefined" &&
+	["localhost:5183", "localhost:5185"].includes(window.location.host)
+		? "http://localhost:5184"
+		: "https://wallet.shieldswap.org";
 
 /**
  * @template T
@@ -26,9 +30,9 @@ export async function accountFromCompleteAddress(
 	pxe: PXE,
 	address: CompleteAddress
 ) {
-	const { AztecEip1193Account } = await import("./exports/eip1193.js");
+	const { Eip1193Account } = await import("./exports/eip1193.js");
 	const nodeInfo = await pxe.getNodeInfo();
-	return new AztecEip1193Account(address, provider, pxe, nodeInfo);
+	return new Eip1193Account(address, provider, pxe, nodeInfo);
 }
 
 export function resolvePxe(getPxe: PXE | (() => AsyncOrSync<PXE>)) {

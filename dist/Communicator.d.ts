@@ -12,6 +12,7 @@ export declare class Communicator {
     private listeners;
     private popupCloseInterval;
     private fallbackOpenPopup;
+    private nonPopupMethods;
     constructor(params: {
         url: string | URL;
         fallbackOpenPopup?: FallbackOpenPopup;
@@ -20,9 +21,6 @@ export declare class Communicator {
      * Posts a message to the popup window
      */
     postMessage: (message: Message) => Promise<void>;
-    /**
-     * Posts a request to the popup window and waits for a response
-     */
     postRequestAndWaitForResponse: <M extends Message>(request: Message) => Promise<M>;
     /**
      * Listens for messages from the popup window that match a given predicate.

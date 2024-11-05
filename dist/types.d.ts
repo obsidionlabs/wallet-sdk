@@ -30,6 +30,8 @@ export type RpcRequestMap = {
         from: string;
         /** List of `FunctionCall`s to be executed in the transaction */
         calls: SerializedFunctionCall[];
+        /** List of `AuthWitness`es to be included in the transaction */
+        authWitnesses: string[];
     }) => string;
     /**
      * Creates an `AuthWitness` for the given message hash.

@@ -20,6 +20,8 @@ export class Communicator {
 
 	private fallbackOpenPopup: FallbackOpenPopup | undefined;
 
+	private nonPopupMethods: Set<string> = new Set(["aztec_accounts"]);
+
 	constructor(params: {
 		url: string | URL;
 		fallbackOpenPopup?: FallbackOpenPopup;
@@ -41,9 +43,39 @@ export class Communicator {
 		popup.postMessage(message, this.url.origin);
 	};
 
-	/**
-	 * Posts a request to the popup window and waits for a response
-	 */
+	// /**
+	//  * Posts a request to the popup window and waits for a response
+	//  */
+	// postRequestAndWaitForResponse = async <M extends Message>(
+	// 	request: Message
+	// ): Promise<M> => {
+	// 	console.log("postRequestAndWaitForResponse...");
+	// 	console.log(
+	// 		"request id in postRequestAndWaitForResponse: ",
+	// 		request.requestId
+	// 	);
+
+	// 	if (
+	// 		typeof request?.data === "object" &&
+	// 		request?.data !== null &&
+	// 		"method" in request.data
+	// 	) {
+	// 		console.log(
+	// 			"request.data.method in postRequestAndWaitForResponse: ",
+	// 			(request.data as { method: string }).method
+	// 		);
+	// 	}
+
+	// 	console.log("request in postRequestAndWaitForResponse: ", request);
+	// 	const responsePromise = this.onMessage<M>(
+	// 		({ requestId }) => requestId === request.requestId
+	// 	);
+	// 	console.log("responsePromise: ", responsePromise);
+	// 	await this.postMessage(request);
+	// 	console.log("...postMessage in postRequestAndWaitForResponse");
+	// 	return await responsePromise;
+	// };
+
 	postRequestAndWaitForResponse = async <M extends Message>(
 		request: Message
 	): Promise<M> => {
@@ -53,24 +85,35 @@ export class Communicator {
 			request.requestId
 		);
 
+		let shouldOpenPopup = true;
+
+		// Check if the method should bypass the popup
 		if (
 			typeof request?.data === "object" &&
 			request?.data !== null &&
-			"method" in request.data
+			"method" in request.data &&
+			this.nonPopupMethods.has((request.data as any).method) // change1
 		) {
 			console.log(
-				"request.data.method in postRequestAndWaitForResponse: ",
-				(request.data as { method: string }).method
+				`Method ${(request.data as any).method} does not require popup.`
 			);
+			shouldOpenPopup = false; // change2
 		}
 
-		console.log("request in postRequestAndWaitForResponse: ", request);
+		console.log("shouldOpenPopup: ", shouldOpenPopup); // change3
+
 		const responsePromise = this.onMessage<M>(
 			({ requestId }) => requestId === request.requestId
 		);
 		console.log("responsePromise: ", responsePromise);
-		await this.postMessage(request);
-		console.log("...postMessage in postRequestAndWaitForResponse");
+
+		if (shouldOpenPopup) {
+			await this.postMessage(request);
+		} else {
+			console.log("Skipping popup for this request."); // change4
+			window.postMessage(request, this.url.origin);
+		}
+
 		return await responsePromise;
 	};
 

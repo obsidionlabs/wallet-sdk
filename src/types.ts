@@ -35,6 +35,8 @@ export type RpcRequestMap = {
 		/** List of `FunctionCall`s to be executed in the transaction */
 		// TODO: use `FunctionCall.toString` and `FunctionCall.fromString` to serialize/deserialize
 		calls: SerializedFunctionCall[];
+		/** List of `AuthWitness`es to be included in the transaction */
+		authWitnesses: string[];
 	}) => string;
 	/**
 	 * Creates an `AuthWitness` for the given message hash.
@@ -102,13 +104,6 @@ export type RpcEventsMap = {
 	 */
 	accountsChanged: [string];
 };
-
-// export type MyWalletConnectOptions = Omit<
-// 	WalletConnectModalSignOptions,
-// 	"metadata"
-// > & {
-// 	metadata?: WalletConnectModalSignOptions["metadata"];
-// };
 
 export interface Eip1193Provider {
 	request(request: {

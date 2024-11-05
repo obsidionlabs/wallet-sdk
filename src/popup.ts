@@ -3,19 +3,20 @@ import { persisted } from "svelte-persisted-store";
 import { get, readonly, writable } from "svelte/store";
 import { assert, type AsyncOrSync } from "ts-essentials";
 import { Communicator, type FallbackOpenPopup } from "./Communicator.js";
-import type { AztecEip1193Account } from "./exports/eip1193.js";
+import type { Eip1193Account } from "./exports/eip1193.js";
+import { joinURL } from "ufo";
 import type {
 	RpcRequest,
 	RpcRequestMap,
 	TypedEip1193Provider,
 } from "./types.js";
 import {
-	OBSIDON_WALLET_URL,
+	SHIELDSWAP_WALLET_URL,
 	accountFromCompleteAddress,
 	resolvePxe,
 } from "./utils.js";
 
-export class ObsidonWalletSDK implements TypedEip1193Provider {
+export class ObsidionWalletSDK implements TypedEip1193Provider {
 	readonly #pxe: () => AsyncOrSync<PXE>;
 
 	readonly #communicator: Communicator;
@@ -26,8 +27,10 @@ export class ObsidonWalletSDK implements TypedEip1193Provider {
 		"shield-wallet-connected-complete-address",
 		null
 	);
-	readonly #account = writable<AztecEip1193Account | undefined>(undefined);
+	readonly #account = writable<Eip1193Account | undefined>(undefined);
 	readonly accountObservable = readonly(this.#account);
+
+	readonly walletUrl: string;
 
 	constructor(
 		pxe: (() => AsyncOrSync<PXE>) | PXE,
@@ -36,16 +39,22 @@ export class ObsidonWalletSDK implements TypedEip1193Provider {
 			 * Must call the provided callback right after user clicks a button, so browser does not block it.
 			 */
 			fallbackOpenPopup?: FallbackOpenPopup;
+			walletUrl?: string;
 		} = {}
 	) {
 		this.#pxe = resolvePxe(pxe);
+		this.walletUrl = params.walletUrl ?? SHIELDSWAP_WALLET_URL;
 		this.#communicator = new Communicator({
-			url: `${OBSIDON_WALLET_URL}/confirm`,
+			url: joinURL(this.walletUrl, "/sign"),
 			...params,
 		});
 
 		let accountId = 0;
 		this.#connectedAccountCompleteAddress.subscribe(async (completeAddress) => {
+			if (typeof window === "undefined") {
+				return;
+			}
+
 			const thisAccountId = ++accountId;
 
 			const { CompleteAddress } = await import("@aztec/aztec.js");
@@ -130,10 +139,9 @@ export class ObsidonWalletSDK implements TypedEip1193Provider {
 				})
 			)?.data;
 			console.log("response: ", response);
-			// if ("error" in response) {
-			// 	console.log("response.error: ", response.error);
-			// 	throw new Error(JSON.stringify(response.error));
-			// }
+			if ("error" in response) {
+				throw new Error(JSON.stringify(response.error));
+			}
 			return response.result ? response.result : "mock response";
 		} finally {
 			console.log("finally...");
@@ -155,8 +163,8 @@ export class ObsidonWalletSDK implements TypedEip1193Provider {
 }
 
 const finalMethods: readonly (keyof RpcRequestMap)[] = [
+	"aztec_accounts",
 	"aztec_requestAccounts",
 	"aztec_sendTransaction",
-	"aztec_createTxExecutionRequest",
 	"aztec_experimental_tokenRedeemShield",
 ];
