@@ -1,0 +1,28 @@
+import { FunctionType } from "@aztec/foundation/abi";
+FunctionType;
+export const serde = {
+    FunctionCall: {
+        serialize: async (fc) => ({
+            selector: fc.selector.toString(),
+            name: fc.name,
+            type: fc.type,
+            isStatic: fc.isStatic,
+            to: fc.to.toString(),
+            args: fc.args.map((fr) => fr.toString()),
+            returnTypes: fc.returnTypes,
+        }),
+        deserialize: async (fc) => {
+            const { Fr, AztecAddress, FunctionSelector } = await import("@aztec/aztec.js");
+            return {
+                selector: FunctionSelector.fromString(fc.selector),
+                name: fc.name,
+                type: fc.type,
+                isStatic: fc.isStatic == "true",
+                to: AztecAddress.fromString(fc.to),
+                args: fc.args.map((fr) => Fr.fromString(fr)),
+                returnTypes: fc.returnTypes,
+            };
+        },
+    },
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VyZGUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvc2VyZGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQ0EsT0FBTyxFQUFFLFlBQVksRUFBRSxNQUFNLHVCQUF1QixDQUFDO0FBRXJELFlBQVksQ0FBQztBQUViLE1BQU0sQ0FBQyxNQUFNLEtBQUssR0FBRztJQUNwQixZQUFZLEVBQUU7UUFDYixTQUFTLEVBQUUsS0FBSyxFQUFFLEVBQWdCLEVBQUUsRUFBRSxDQUFDLENBQUM7WUFDdkMsUUFBUSxFQUFFLEVBQUUsQ0FBQyxRQUFRLENBQUMsUUFBUSxFQUFFO1lBQ2hDLElBQUksRUFBRSxFQUFFLENBQUMsSUFBSTtZQUNiLElBQUksRUFBRSxFQUFFLENBQUMsSUFBSTtZQUNiLFFBQVEsRUFBRSxFQUFFLENBQUMsUUFBUTtZQUNyQixFQUFFLEVBQUUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxRQUFRLEVBQUU7WUFDcEIsSUFBSSxFQUFFLEVBQUUsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUMsRUFBRSxFQUFFLEVBQUUsQ0FBQyxFQUFFLENBQUMsUUFBUSxFQUFFLENBQUM7WUFDeEMsV0FBVyxFQUFFLEVBQUUsQ0FBQyxXQUFXO1NBQzNCLENBQUM7UUFDRixXQUFXLEVBQUUsS0FBSyxFQUFFLEVBQU8sRUFBRSxFQUFFO1lBQzlCLE1BQU0sRUFBRSxFQUFFLEVBQUUsWUFBWSxFQUFFLGdCQUFnQixFQUFFLEdBQUcsTUFBTSxNQUFNLENBQzFELGlCQUFpQixDQUNqQixDQUFDO1lBQ0YsT0FBTztnQkFDTixRQUFRLEVBQUUsZ0JBQWdCLENBQUMsVUFBVSxDQUFDLEVBQUUsQ0FBQyxRQUFRLENBQUM7Z0JBQ2xELElBQUksRUFBRSxFQUFFLENBQUMsSUFBSTtnQkFDYixJQUFJLEVBQUUsRUFBRSxDQUFDLElBQUk7Z0JBQ2IsUUFBUSxFQUFFLEVBQUUsQ0FBQyxRQUFRLElBQUksTUFBTTtnQkFDL0IsRUFBRSxFQUFFLFlBQVksQ0FBQyxVQUFVLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQztnQkFDbEMsSUFBSSxFQUFFLEVBQUUsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUMsRUFBVSxFQUFFLEVBQUUsQ0FBQyxFQUFFLENBQUMsVUFBVSxDQUFDLEVBQUUsQ0FBQyxDQUFDO2dCQUNwRCxXQUFXLEVBQUUsRUFBRSxDQUFDLFdBQVc7YUFDWCxDQUFDO1FBQ25CLENBQUM7S0FDRDtDQUNELENBQUMifQ==
