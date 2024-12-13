@@ -28,10 +28,10 @@
     "@types/react": "^18.2.25"
   },
   "dependencies": {
-    "@aztec/aztec.js": "0.65.2",
-    "@aztec/circuit-types": "0.65.2",
-    "@aztec/circuits.js": "0.65.2",
-    "@aztec/foundation": "0.65.2",
+    "@aztec/aztec.js": "0.67.0",
+    "@aztec/circuit-types": "0.67.0",
+    "@aztec/circuits.js": "0.67.0",
+    "@aztec/foundation": "0.67.0",
     "svelte": "^5.0.0-next.144",
     "svelte-persisted-store": "^0.11.0",
     "ts-essentials": "^9.4.2",
