@@ -24,7 +24,7 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 	#pendingRequestsCount = 0;
 
 	readonly #connectedAccountCompleteAddress = persisted<string | null>(
-		"shield-wallet-connected-complete-address",
+		"wallet-connected-complete-address",
 		null
 	);
 	readonly #account = writable<Eip1193Account | undefined>(undefined);
