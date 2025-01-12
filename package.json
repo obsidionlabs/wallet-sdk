@@ -1,55 +1,57 @@
 {
-  "name": "@obsidion/wallet-sdk",
-  "version": "0.0.1",
-  "type": "module",
-  "main": "src/exports/index.js",
-  "module": "src/exports/index.js",
-  "exports": {
-    ".": {
-      "import": "./src/exports/index.js",
-      "types": "./src/exports/index.d.ts"
-    },
-    "./*": {
-      "import": "./src/exports/*.js",
-      "types": "./src/exports/*.d.ts"
-    }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "devDependencies": {
-    "prettier": "^3.2.5",
-    "typescript": "^5.5.2",
-    "react": "^18.2.0",
-    "@types/react": "^18.2.25"
-  },
-  "dependencies": {
-    "@aztec/aztec.js": "0.67.0",
-    "@aztec/circuit-types": "0.67.0",
-    "@aztec/circuits.js": "0.67.0",
-    "@aztec/foundation": "0.67.0",
-    "svelte": "^5.0.0-next.144",
-    "svelte-persisted-store": "^0.11.0",
-    "ts-essentials": "^9.4.2",
-    "tslib": "^2.8.0",
-    "ufo": "^1.5.4"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
-    "@types/react": "^18.2.25"
-  },
-  "scripts": {
-    "dev": "pnpm _chore && tsc -w",
-    "build": "pnpm _chore && rm -rf dist && tsc",
-    "build:clean": "rm tsconfig.tsbuildinfo && pnpm _chore && rm -rf dist && tsc",
-    "test": "pnpm test:lint",
-    "test:lint": "tsc --noEmit --emitDeclarationOnly false && prettier --check .",
-    "test:lint:fix": "prettier --write .",
-    "_chore": "pnpm i"
-  },
-  "types": "dist/exports/index.d.ts"
+	"name": "@obsidion/wallet-sdk",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "src/exports/index.js",
+	"module": "src/exports/index.js",
+	"exports": {
+		".": {
+			"import": "./src/exports/index.js",
+			"types": "./src/exports/index.d.ts"
+		},
+		"./*": {
+			"import": "./src/exports/*.js",
+			"types": "./src/exports/*.d.ts"
+		}
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"devDependencies": {
+		"prettier": "^3.2.5",
+		"typescript": "^5.5.2",
+		"react": "^18.2.0",
+		"@types/react": "^18.2.25"
+	},
+	"dependencies": {
+		"@aztec/aztec.js": "0.67.0",
+		"@aztec/circuit-types": "0.67.0",
+		"@aztec/circuits.js": "0.67.0",
+		"@aztec/foundation": "0.67.0",
+		"@walletconnect/modal-sign-html": "^2.6.2",
+		"@walletconnect/utils": "^2.11.2",
+		"svelte": "^5.0.0-next.144",
+		"svelte-persisted-store": "^0.11.0",
+		"ts-essentials": "^9.4.2",
+		"tslib": "^2.8.0",
+		"ufo": "^1.5.4"
+	},
+	"peerDependencies": {
+		"react": "^18.2.0",
+		"@types/react": "^18.2.25"
+	},
+	"scripts": {
+		"dev": "pnpm _chore && tsc -w",
+		"build": "pnpm _chore && rm -rf dist && tsc",
+		"build:clean": "rm tsconfig.tsbuildinfo && pnpm _chore && rm -rf dist && tsc",
+		"test": "pnpm test:lint",
+		"test:lint": "tsc --noEmit --emitDeclarationOnly false && prettier --check .",
+		"test:lint:fix": "prettier --write .",
+		"_chore": "pnpm i"
+	},
+	"types": "dist/exports/index.d.ts"
 }

@@ -5,7 +5,6 @@ import {
 	CompleteAddress,
 	Fr,
 	TxExecutionRequest,
-	TxHash,
 	type NodeInfo,
 	type PXE,
 } from "@aztec/aztec.js";
@@ -43,56 +42,12 @@ export class Eip1193Account extends AccountWallet {
 		this.#pendingAuthWits = pendingAuthwits;
 	}
 
-	async experimental_createSecretHash(contractAddress: string | AztecAddress) {
-		const { Fr } = await import("@aztec/aztec.js");
-		const secretHash = await this.#eip1193Provider.request({
-			method: "aztec_experimental_createSecretHash",
-			params: [
-				{
-					from: this.account.getAddress().toString(),
-					contract: contractAddress.toString(),
-				},
-			],
-		});
-		return new Fr(BigInt(secretHash));
-	}
-
-	async experimental_redeemShield(
-		token: AztecAddress | string,
-		amount: Fr | string | bigint,
-		secretHash: Fr | string | bigint,
-		txHash: TxHash | string
-	) {
-		const { SentTx, TxHash } = await import("@aztec/aztec.js");
-		const redeemTxHash = this.#eip1193Provider
-			.request({
-				method: "aztec_experimental_tokenRedeemShield",
-				params: [
-					{
-						from: this.account.getAddress().toString(),
-						token: token.toString(),
-						amount: amount.toString(),
-						secretHash: secretHash.toString(),
-						txHash: txHash.toString(),
-					},
-				],
-			})
-			.then((txHash) => TxHash.fromString(txHash));
-
-		return new SentTx(this.pxe, redeemTxHash);
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	override async sendTx(tx: any) {
 		const { TxHash } = await import("@aztec/aztec.js");
 		const serializedExecs = await Promise.all(
 			(tx.executions as ExecutionRequestInit).calls.map((e) =>
 				serde.FunctionCall.serialize(e)
 			)
-		);
-		console.log(
-			"pending authwits: ",
-			this.#pendingAuthWits.map((x) => x.toString())
 		);
 		const result = await this.#eip1193Provider.request({
 			method: "aztec_sendTransaction",
@@ -105,7 +60,6 @@ export class Eip1193Account extends AccountWallet {
 			],
 		});
 		this.#pendingAuthWits.splice(0, this.#pendingAuthWits.length); // clear
-		console.log("result: ", result);
 		return TxHash.fromString(result);
 	}
 
@@ -120,7 +74,6 @@ export class Eip1193Account extends AccountWallet {
 			toTx() {
 				return this;
 			},
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} as any;
 	}
 
@@ -135,16 +88,15 @@ export class Eip1193Account extends AccountWallet {
 			msgSender,
 			skipTxValidation,
 			...txRequest,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} as any;
 	}
 
 	override async createTxExecutionRequest(executions: ExecutionRequestInit) {
 		// forward data to `this.simulateTx`
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return { executions } as any;
 	}
 }
+
 class Eip1193AccountInterface implements AccountInterface {
 	readonly #completeAddress: CompleteAddress;
 

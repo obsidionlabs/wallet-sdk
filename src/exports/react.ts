@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import type { ObsidionWalletSDK } from "../popup.js";
+import type { WalletWcSdk } from "../wc.js";
 import type { Eip1193Account } from "./eip1193.js";
+import type { WalletSdk } from './index.js';
 
-export function useAccount(wallet: ObsidionWalletSDK) {
+export function useAccount(
+	wallet: WalletSdk | WalletWcSdk
+) {
 	const [account, setAccount] = useState<Eip1193Account | undefined>(undefined);
 
 	useEffect(() => {

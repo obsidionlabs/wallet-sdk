@@ -1,23 +1,14 @@
 {
 	"compilerOptions": {
 		"outDir": "dist",
-		"baseUrl": ".",
-		"rootDir": "src",
 		"target": "es2020",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
+		"module": "NodeNext",
+		"moduleResolution": "nodenext",
 		"strict": true,
 		"declaration": true,
-		"allowSyntheticDefaultImports": true,
-		"allowJs": true,
-		"esModuleInterop": true,
-		"downlevelIteration": true,
-		"inlineSourceMap": true,
 		"declarationMap": true,
 		"importHelpers": true,
 		"resolveJsonModule": true,
-		"composite": true,
-		"skipLibCheck": true
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "trash"]

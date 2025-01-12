@@ -1,20 +1,26 @@
-import { CompleteAddress, PXE } from "@aztec/circuit-types";
-import { TypedEip1193Provider } from "./types.js";
-import { AsyncOrSync } from "ts-essentials";
+import type { CompleteAddress, PXE } from "@aztec/aztec.js";
+import type { AsyncOrSync } from "ts-essentials";
+import type { Eip1193Provider, RpcRequestMap } from "./types.js";
 
-export const SHIELDSWAP_WALLET_URL: string =
-	typeof window !== "undefined" &&
-	["localhost:5183", "localhost:5185"].includes(window.location.host)
-		? "http://localhost:5184"
-		: "https://wallet.shieldswap.org";
+const CAIP_PREFIX = "aztec";
+const AZTEC_CHAIN_ID = "1";
+export const CAIP = {
+	chain() {
+		return `${CAIP_PREFIX}:${AZTEC_CHAIN_ID}`;
+	},
+	address(address: string) {
+		return `${CAIP_PREFIX}:${AZTEC_CHAIN_ID}:${address.toLowerCase()}`;
+	},
+};
 
-/**
- * @template T
- * @param {() => T} fn
- */
-export function lazyValue(fn: () => any) {
-	/** @type T */
-	let value: any;
+export const DEFAULT_WALLET_URL = "https://obsidion.vercel.app";
+
+export const METHODS_NOT_REQUIRING_CONFIRMATION: (keyof RpcRequestMap)[] = [
+	"aztec_accounts",
+];
+
+export function lazyValue<T>(fn: () => T) {
+	let value: T;
 	let initialized = false;
 	return () => {
 		if (!initialized) {
@@ -26,7 +32,7 @@ export function lazyValue(fn: () => any) {
 }
 
 export async function accountFromCompleteAddress(
-	provider: TypedEip1193Provider,
+	provider: Eip1193Provider,
 	pxe: PXE,
 	address: CompleteAddress
 ) {
@@ -36,9 +42,7 @@ export async function accountFromCompleteAddress(
 }
 
 export function resolvePxe(getPxe: PXE | (() => AsyncOrSync<PXE>)) {
-	const getPxe2 = lazyValue(
-		typeof getPxe === "function" ? getPxe : () => getPxe
-	);
+	const getPxe2 = typeof getPxe === "function" ? getPxe : () => getPxe;
 	return lazyValue(async () => {
 		const { waitForPXE } = await import("@aztec/aztec.js");
 		const pxe = await getPxe2();

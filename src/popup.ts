@@ -2,21 +2,21 @@ import type { PXE } from "@aztec/aztec.js";
 import { persisted } from "svelte-persisted-store";
 import { get, readonly, writable } from "svelte/store";
 import { assert, type AsyncOrSync } from "ts-essentials";
+import { joinURL } from "ufo";
 import { Communicator, type FallbackOpenPopup } from "./Communicator.js";
 import type { Eip1193Account } from "./exports/eip1193.js";
-import { joinURL } from "ufo";
 import type {
 	RpcRequest,
 	RpcRequestMap,
 	TypedEip1193Provider,
 } from "./types.js";
 import {
-	SHIELDSWAP_WALLET_URL,
+	DEFAULT_WALLET_URL,
 	accountFromCompleteAddress,
 	resolvePxe,
 } from "./utils.js";
 
-export class ObsidionWalletSDK implements TypedEip1193Provider {
+export class WalletSdk implements TypedEip1193Provider {
 	readonly #pxe: () => AsyncOrSync<PXE>;
 
 	readonly #communicator: Communicator;
@@ -36,14 +36,16 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 		pxe: (() => AsyncOrSync<PXE>) | PXE,
 		params: {
 			/**
+			 * Called when user browser blocks a popup. Use this to attempt to re-open the popup.
 			 * Must call the provided callback right after user clicks a button, so browser does not block it.
+			 * Browsers usually don't block popups if they are opened within a few milliseconds of a button click.
 			 */
 			fallbackOpenPopup?: FallbackOpenPopup;
 			walletUrl?: string;
 		} = {}
 	) {
 		this.#pxe = resolvePxe(pxe);
-		this.walletUrl = params.walletUrl ?? SHIELDSWAP_WALLET_URL;
+		this.walletUrl = params.walletUrl ?? DEFAULT_WALLET_URL;
 		this.#communicator = new Communicator({
 			url: joinURL(this.walletUrl, "/sign"),
 			...params,
@@ -84,7 +86,6 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 			method: "aztec_requestAccounts",
 			params: [],
 		});
-		console.log("result in connect: ", result);
 		const [address] = result;
 		assert(address, "No accounts found");
 		const account = await accountFromCompleteAddress(
@@ -111,16 +112,13 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 	async request<M extends keyof RpcRequestMap>(
 		request: RpcRequest<M>
 	): Promise<ReturnType<RpcRequestMap[M]>> {
-		console.log("request: ", request);
 		const result = await this.#requestPopup(request);
-		console.log("result in request: ", result);
 		return result;
 	}
 
 	async #requestPopup<M extends keyof RpcRequestMap>(
 		request: RpcRequest<M>
 	): Promise<ReturnType<RpcRequestMap[M]>> {
-		console.log("requestPopup...");
 		this.#pendingRequestsCount++;
 		// TODO: handle batch requests
 		try {
@@ -130,21 +128,17 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 				method: request.method,
 				params: request.params,
 			};
-			console.log("rpcRequest: ", rpcRequest);
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const response: any = (
 				await this.#communicator.postRequestAndWaitForResponse({
 					requestId: crypto.randomUUID(),
 					data: rpcRequest,
 				})
 			)?.data;
-			console.log("response: ", response);
 			if ("error" in response) {
 				throw new Error(JSON.stringify(response.error));
 			}
-			return response.result ? response.result : "mock response";
+			return response.result;
 		} finally {
-			console.log("finally...");
 			this.#pendingRequestsCount--;
 
 			const disconnectIfNoPendingRequests = () => {
@@ -162,9 +156,12 @@ export class ObsidionWalletSDK implements TypedEip1193Provider {
 	}
 }
 
+/** @deprecated use WalletSdk */
+export type ObsidionWalletSDK = WalletSdk;
+/** @deprecated use WalletSdk */
+export const ObsidionWalletSDK = WalletSdk;
+
 const finalMethods: readonly (keyof RpcRequestMap)[] = [
-	"aztec_accounts",
 	"aztec_requestAccounts",
 	"aztec_sendTransaction",
-	"aztec_experimental_tokenRedeemShield",
 ];

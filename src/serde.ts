@@ -1,11 +1,21 @@
-import { FunctionCall } from "@aztec/circuit-types";
-import { FunctionType } from "@aztec/foundation/abi";
+import type { FunctionCall } from "@aztec/aztec.js";
+import type { FunctionType } from "@aztec/foundation/abi";
+import type { SerializedFunctionCall } from "./types.js";
 
-FunctionType;
+interface SerdeItem<T, S> {
+	serialize(value: T): Promise<S>;
+	deserialize(value: S): Promise<T>;
+}
+interface Serde {
+	FunctionCall: SerdeItem<FunctionCall, SerializedFunctionCall>;
+}
 
-export const serde = {
+/**
+ * @deprecated TODO: think of a better way to do this (serialize as a string using ClassConverter)
+ */
+export const serde: Serde = {
 	FunctionCall: {
-		serialize: async (fc: FunctionCall) => ({
+		serialize: async (fc) => ({
 			selector: fc.selector.toString(),
 			name: fc.name,
 			type: fc.type,
@@ -14,19 +24,19 @@ export const serde = {
 			args: fc.args.map((fr) => fr.toString()),
 			returnTypes: fc.returnTypes,
 		}),
-		deserialize: async (fc: any) => {
+		deserialize: async (fc) => {
 			const { Fr, AztecAddress, FunctionSelector } = await import(
 				"@aztec/aztec.js"
 			);
 			return {
 				selector: FunctionSelector.fromString(fc.selector),
 				name: fc.name,
-				type: fc.type,
-				isStatic: fc.isStatic == "true",
+				type: fc.type as FunctionType,
+				isStatic: fc.isStatic,
 				to: AztecAddress.fromString(fc.to),
-				args: fc.args.map((fr: string) => Fr.fromString(fr)),
+				args: fc.args.map((fr) => new Fr(BigInt(fr))),
 				returnTypes: fc.returnTypes,
-			} as FunctionCall;
+			};
 		},
 	},
 };
